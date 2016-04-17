@@ -44,7 +44,7 @@ def login():
     if code:
         r = requests.get("https://foursquare.com/oauth2/access_token?client_id=" + client_id + "&client_secret=" + client_secret + "&grant_type=authorization_code&code=" + code)
         if (r.status_code == 200):
-            return dumps(r)
+            return dumps(r.json())
         
 @app.route("/cities", methods=['GET'])
 def search_cities():
