@@ -80,7 +80,7 @@ def create_travel():
             activities = [activity1, activity2];
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
             #travel_id = db.travels.insert_one(travel).inserted_id
-            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities, r.json() } )
+            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities, "response": r.json()} )
     except:
         return dumps({'Error': 'Error occured'})
 
