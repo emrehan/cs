@@ -35,6 +35,17 @@ def dummy_db():
         travel.save()
         return dumps( {'travel': travel} )
 
+@app.route("/login", methods=["GET"])
+def login():
+    code = request.args.get("code")
+    client_id = XWWK4XOYWX3J1XDRN43LL2V0EB41OFCDF3EBZ1CZIABKA1DL
+    client_secret = MGDCFYKO2SZP0TNPWOI4KJ2P5GVHRTWUIAB4O0I25PBH2BAS
+    
+    if code:
+        r = requests.get("https://foursquare.com/oauth2/access_token?client_id=" + client_id + "&client_secret=" + client_secret + "&grant_type=authorization_code&code=" + code)
+        if (r.status_code == 200):
+            return dumps(r)
+        
 @app.route("/cities", methods=['GET'])
 def search_cities():
     query = request.args.get('query')
