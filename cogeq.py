@@ -82,7 +82,7 @@ def create_travel():
             activities = [activity1, activity2];
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
             travel_id = Travel(travel_id = str(uuid.uuid1()))
-            travel.save
+            travel.save()
             return dumps( { 'travel_id': travel_id, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities, "response": r.json()} )
     except:
         return dumps({'Error': 'Error occured'})
