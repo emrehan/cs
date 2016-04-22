@@ -106,7 +106,7 @@ def travel(travel_id):
         return dumps( { 'travel_id': travel_id, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat) } )
 
 @app.route("/travels/<travel_id>/<activity_id>", methods=['DELETE'])
-def create_travel():
+def delete_travel(travel_id, activity_id):
     try:
         place2 = {"latitude": "39.1667", "longitude": "35.6667"}
         activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
