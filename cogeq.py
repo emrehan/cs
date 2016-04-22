@@ -109,15 +109,15 @@ def travel(travel_id):
 def delete_travel(travel_id, activity_id):
     try:
         place2 = {"latitude": "39.1667", "longitude": "35.6667"}
-        activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
+        activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": "2016-04-04T20:00:00", "to": "2016-04-04T20:00:00"}
         place3 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
-        activity3 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
+        activity3 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place3, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": "2016-04-04T20:00:00", "to": "2016-04-04T20:00:00"}
         place4 = {"latitude": "39.1667", "longitude": "35.6667"}
-        activity4 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
+        activity4 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place4, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": "2016-04-04T20:00:00", "to": "2016-04-04T20:00:00"}
         place5 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
-        activity5 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
+        activity5 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place5, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": "2016-04-04T20:00:00", "to": "2016-04-04T20:00:00"}
         place6 = {"latitude": "39.1667", "longitude": "35.6667"}
-        activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
+        activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place6, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": "2016-04-04T20:00:00", "to": "2016-04-04T20:00:00"}
         activities = [activity2, activity3, activity4, activity5, activity6];
         travel = { 'city': "asd", 'from': "2016-04-04T20:00:00", 'to': "2016-04-04T20:00:00", 'activities': activities}
         return dumps( { 'travel_id': 3, 'from': "2016-04-04T20:00:00", 'to': "2016-04-04T20:00:00", 'activities': activities} )
