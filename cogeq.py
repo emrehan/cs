@@ -81,7 +81,8 @@ def create_travel():
             activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             activities = [activity1, activity2];
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
-            travel_id = db.travels.insert_one(travel).inserted_id
+            travel_id = Travel(travel_id = str(uuid.uuid1()))
+            travel.save
             return dumps( { 'travel_id': travel_id, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities, "response": r.json()} )
     except:
         return dumps({'Error': 'Error occured'})
