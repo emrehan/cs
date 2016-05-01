@@ -270,7 +270,7 @@ def create_travel():
             sortedEstimatedRankings.reverse()
             venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
             
-            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(venue_ids, day)})
+            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(venue_ids, ffrom)})
     except:
         traceback.print_exc()
         return dumps({'Error': 'Error occured'})
