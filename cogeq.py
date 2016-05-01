@@ -22,7 +22,7 @@ food_categories = set([line.rstrip('\n') for line in open('food_categories.txt')
 ### FUNCTIONS ###
 
 def get_bulk_venues(access_token, venue_ids, batch):
-    size = 10
+    size = 20
     url = 'https://api.foursquare.com/v2//venues/'
     params = "?oauth_token=" + access_token + "&v=20160417"
 
@@ -68,7 +68,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
     print('=== Batch ' + str(batch) + " ===")
     print('Request venue ids are ' + str(request_venue_ids))
     print('Candidate venues are ' + str(candidate_venues_b))
-    print('Returned ' + str(len(result_venues)) + ' candidate venues: '
+    print('Returned ' + str(len(result_venues)) + ' candidate venues: ')
     print(result_venues)
     print('')
     
@@ -101,7 +101,7 @@ def get_venues_for_day(access_token, venue_ids, day):
             candidate_venues += get_bulk_venues(access_token, venue_ids, batch)
             batch += 1
 
-        if batch >= 10:
+        if batch >= 10: 
             print('High number of batches executed: ' + str(batch - 1))
             print('Terminating  (-_-)')
             break
