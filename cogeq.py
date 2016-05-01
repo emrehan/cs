@@ -135,8 +135,8 @@ def create_travel():
             userCategoryTFDictionary = {}
 
             data = json.load(r.text)
-            count = data["response"]["response"]["checkins"]["count"]
-            items = data["response"]["response"]["checkins"]["items"]
+            count = data["response"]["checkins"]["count"]
+            items = data["response"]["checkins"]["items"]
 
             for item in items:
                 categories = item["venue"]["categories"]
