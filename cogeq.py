@@ -190,7 +190,7 @@ def create_travel():
             activitesArr = []
             for activity in activities:
                 place = {"latitude": activity.place.latitude, "longitude": activity.place.longitude}
-                activity = {"id": activity.id, "name": activity.name, "type": "visit", "place": activity.place,
+                activity = {"id": activity.id, "name": activity.name, "type": "visit", "place": place,
                              "picture_url": activity.picture_url,
                              "description": activity.description, "from": activity.ffrom,
                              "to": activity.to}
