@@ -131,12 +131,10 @@ def create_travel():
             expertIDsFilePath = prePath + cityName + expertIDsFileName
             expertCheckinsPrefix = prePath + cityName + checkinsFolderName
 
-            return ("dasfsa")
-
             # Create TF-IDF vector of the user
             userCategoryTFDictionary = {}
 
-            data = json.load(r.text)
+            data = json.loads(r.text)
             count = data["response"]["checkins"]["count"]
             items = data["response"]["checkins"]["items"]
 
