@@ -100,7 +100,7 @@ def create_travel():
             for line in lines:
                 categories.append(line)
                 checkinCounts.append(0)
-            for item in r["response"][items]:
+            for item in r["response"]["items"]:
                 if item["categories"]["name"] in categories:
                     categoryIndex = categories.index(item["categories"]["name"])
                     checkinCounts[categoryIndex] += 1
