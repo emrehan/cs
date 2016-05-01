@@ -12,6 +12,7 @@ import json
 import os
 import requests 
 import uuid
+import traceback
 
 class Travel(DynamicDocument):
     travel_id = StringField()
@@ -237,6 +238,7 @@ def create_travel():
                 activitesArr.append(activity)
             return dumps({'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activitesArr})
     except:
+        traceback.print_exc()
         return dumps({'Error': 'Error occured'})
 
 @app.route("/travels/<travel_id>", methods=['GET', 'PUT'])
@@ -268,6 +270,7 @@ def delete_travel(travel_id, activity_id):
         travel = { 'city': "asd", 'from': "2016-04-04T20:00:00", 'to': "2016-04-04T20:00:00", 'activities': activities}
         return dumps( { 'travel_id': 3, 'from': "2016-04-04T20:00:00", 'to': "2016-04-04T20:00:00", 'activities': activities} )
     except:
+        traceback.print_exc()
         return dumps({'Error': 'Error occured'})
         
 if __name__ == "__main__": 
