@@ -14,7 +14,7 @@ import requests
 import uuid
 
 class Travel(DynamicDocument):
-    to = String
+    travel_id = StringField()
     
 class Place:
     def __init__(self, latitude, longitude):
@@ -200,7 +200,7 @@ def create_travel():
 
                     # TODO Need decision?
                     if venueId in estimatedRankings:
-                        estimatedRankings[venueId] = max(estimatedRankings[venueId], estimatedRanking)
+                        estimatedRankings[venueId] += max(estimatedRankings[venueId], estimatedRanking)
                     else:
                         estimatedRankings[venueId] = estimatedRanking
 
