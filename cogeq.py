@@ -15,8 +15,6 @@ import uuid
 
 class Travel(DynamicDocument):
     travel_id = StringField()
-    def __init__(self, travel_id):
-        self.travel_id = travel_id
     
 class Place:
     def __init__(self, latitude, longitude):
