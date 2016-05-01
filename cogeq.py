@@ -131,6 +131,8 @@ def create_travel():
             expertIDsFilePath = prePath + cityName + expertIDsFileName
             expertCheckinsPrefix = prePath + cityName + checkinsFolderName
 
+            return ("dasfsa")
+
             # Create TF-IDF vector of the user
             userCategoryTFDictionary = {}
 
@@ -154,8 +156,7 @@ def create_travel():
             categoryLines = categoriesFile.readlines()
             userCategoryTFIDFs = []
 
-            return ("dasfsa")
-            
+
             for line in categoryLines:
                 tokens = line.split(delimiter)
                 categoryName = tokens[0]
