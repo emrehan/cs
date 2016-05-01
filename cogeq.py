@@ -173,10 +173,13 @@ def create_travel():
             activities = []
             for venueId, ranking in sortedEstimatedRankings[:3]:
                 photoResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417").text)
-                photoItem = photoResponse["response"]["photos"]["items"][0]
-                prefix = photoItem["prefix"]
-                suffix = photoItem["suffix"]
-                photoURL = prefix + "500x300" + suffix
+                if photoResponse["response"]["photos"]["count"]:
+                    photoItem = photoResponse["response"]["photos"]["items"][0]
+                    prefix = photoItem["prefix"]
+                    suffix = photoItem["suffix"]
+                    photoURL = prefix + "500x300" + suffix
+                else:
+                    photoURL = "http://www.fb-coverz.com/covers/preview/travel.png"
                 
                 venueResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417").text)
                 venue = venueResponse["response"]["venue"]
@@ -195,7 +198,6 @@ def create_travel():
                              "description": activity.description, "from": activity.ffrom,
                              "to": activity.to}
                 activitesArr.append(activity)
-            return dumps({"activities": activitesArr})
             return dumps({'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activitesArr})
     except:
         return dumps({'Error': 'Error occured'})
