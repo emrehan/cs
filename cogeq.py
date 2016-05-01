@@ -15,6 +15,8 @@ import uuid
 import traceback
 import grequests
 
+timeFormat = "%Y-%m-%dT%H:%M:%S"
+
 day_categories = set([line.rstrip('\n') for line in open('day_categories.txt')])
 night_categories = set([line.rstrip('\n') for line in open('night_categories.txt')])
 food_categories = set([line.rstrip('\n') for line in open('food_categories.txt')])
@@ -90,8 +92,8 @@ def get_venues_for_day(access_token, venue_ids, date):
         is_added = False
         for venue in candidate_venues:
             if next_type in venue['allocations']:
-                venue['from'] = date
-                venue['to'] = date
+                venue['from'] = date.strftime(timeFormat)
+                venue['to'] = date.strftime(timeFormat)
                 scheduled_venues.append(venue)
                 candidate_venues.remove(venue)
                 is_added = True
@@ -179,7 +181,6 @@ def search_cities():
         
 @app.route("/travels", methods=['POST'])
 def create_travel():
-    timeFormat = "%Y-%m-%dT%H:%M:%S";
     try:
         city = request.args.get('city')
         access_token = request.args.get('access_token')
