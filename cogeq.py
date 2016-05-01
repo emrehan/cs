@@ -118,6 +118,7 @@ def create_travel():
             place6 = {"latitude": "39.1667", "longitude": "35.6667"}
             activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
+            return dumps("asd2")
 
             #BURAYA EKLİYORUM
             prePath = "checkins/"
