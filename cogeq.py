@@ -48,7 +48,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
         if len(categories.intersection(food_categories)) > 0:
             allocations.append('food')
 
-        if len(allocations) >= 0:
+        if len(allocations) > 0:
             venue = {}
             venue['type'] = 'visit'
             venue['allocations'] = allocations
