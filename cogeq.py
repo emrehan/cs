@@ -26,14 +26,15 @@ def get_bulk_venues(access_token, venue_ids, batch):
     url = 'https://api.foursquare.com/v2//venues/'
     params = "?oauth_token=" + access_token + "&v=20160417"
 
-    request_urls = list(map(lambda i: url + i + params, venue_ids[batch*size:(batch+1)*size]))
+    request_venue_ids = venue_ids[batch*size:(batch+1)*size]
+    request_urls = list(map(lambda i: url + i + params, request_venue_ids))
+
 
     candidate_venues_a = (grequests.get(u, timeout=3) for u in request_urls)
     candidate_venues_b = grequests.map(candidate_venues_a)
     candidate_venues_c = filter(None, candidate_venues_b)
     candidate_venues_d = list(map(lambda r: r.json()['response']['venue'], candidate_venues_c))
 
-    print('Debug: Candidate venues are ' + str(candidate_venues_b))
 
     result_venues = []
     for candidate_venue in candidate_venues_d:
@@ -62,7 +63,11 @@ def get_bulk_venues(access_token, venue_ids, batch):
                 venue['picture_url'] = 'http://www.fb-coverz.com/covers/preview/travel.png'
 
             result_venues.append(venue)
+
+    print('Debug: Request venue ids are ' + str(request_venue_ids))
+    print('Debug: Candidate venues are ' + str(candidate_venues_b))
     print( 'Debug: Returned ' + str(len(result_venues)) + ' candidate venues: ' + str(result_venues))
+    
     return result_venues
 
 def get_venues_for_day(access_token, venue_ids, day):
