@@ -15,6 +15,8 @@ import uuid
 
 class Travel(DynamicDocument):
     travel_id = StringField()
+    def __init__(self, travel_id):
+        self.travel_id = travel_id
     
 class Place:
     def __init__(self, latitude, longitude):
@@ -71,12 +73,13 @@ def search_cities():
     query = request.args.get('query')
 
     if query:
-        r = requests.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?types=(cities)&key=' + config['keys']['google_places'] + '&input=' + query )        
-        if (r.status_code == 200):     
-            cities = list( map( lambda x: x['description'], r.json()['predictions'] ) )
-            return dumps( {'cities': cities}, ensure_ascii=False )
-        else:
-            return dumps( {'Error': 'Error while getting Google Place API response'}, ensure_ascii=False )
+        cities = []
+        with open('city_names.txt') as f:
+            lines = f.readlines()
+            for line in lines:
+                cities.append(line)
+
+
     else:
         default_cities = ['Istanbul, Turkey', 'London, United Kingdom', 'Izmir, Turkey', 'Singapore, Singapore', 'NYC, United States']
         return dumps( {'cities': default_cities}, ensure_ascii=False)
