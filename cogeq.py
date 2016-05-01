@@ -4,7 +4,10 @@ from bson.json_util import dumps
 from flask import Flask, request, jsonify
 from flask.ext.mongoengine import MongoEngine
 from mongoengine import *
+from scipy import spatial
 
+import numpy
+import operator
 import json
 import os
 import requests 
@@ -12,6 +15,21 @@ import uuid
 
 class Travel(DynamicDocument):
     travel_id = StringField()
+    
+class Place:
+    def __init__(self, latitude, longitude):
+        self.latitude = latitude
+        self.longitude = longitude
+class Activity:
+    def __init__(self, id, name, description, picture_url, place):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.picture_url = picture_url
+        self.place = place
+    def addFromTo(self, ffrom, to):
+        self.ffrom = ffrom
+        self.to = to
 
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
@@ -74,8 +92,21 @@ def create_travel():
         if (not city or not access_token or not ffrom or not to):
             return dumps( {'Error': 'city, from and to must be provided.'} )
         else:
-            r = requests.get("https://api.foursquare.com/v2/users/self/checkins?oauth_token=" + access_token + "&limit=250&offset=0&v=20160417")
-            place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
+            r = requests.get("https://api.foursquare.com/v2/users/self/checkins?oauth_token=" + access_token + "&limit=250&offset=0&v=20160417")            
+            categories = []
+            checkinCounts = []
+            lines = []
+            with open("categories.txt") as f:
+                lines = f.readlines()
+            for line in lines:
+                categories.append(line)
+                checkinCounts.append(0)
+            for item in r["response"][items]:
+                if item["categories"]["name"] in categories:
+                    categoryIndex = categories.index(item["categories"]["name"])
+                    checkinCounts[categoryIndex] += 1
+                
+            '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
             activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             place2 = {"latitude": "39.1667", "longitude": "35.6667"}
             activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
@@ -87,9 +118,75 @@ def create_travel():
             activity5 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             place6 = {"latitude": "39.1667", "longitude": "35.6667"}
             activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            activities = [activity1, activity2, activity3, activity4, activity5, activity6];
+            activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
+            #BURAYA EKLİYORUM
+            prePath = "checkins/"
+            cityName = "London/"
+            expertListFileName = "experts"
+            fileSuffix = ".csv"
+            delimiter = ","
+
+            expertsFilePath = prePath + cityName + expertListFileName + fileSuffix
+            expertCheckinsPrefix = prePath + cityName
+
+
+            #Turkish Restaurant,Restaurant,Museum
+
+            #TODO Find category-checkin count vector of the user
+            userCategoryCheckinCounts = checkinCounts
+
+            #Iterate through experts
+            expertsFile = open(expertsFilePath, "r")
+            lines = expertsFile.readlines()
+            cosineSimilarities = {}
+
+            for line in lines:
+                tokens = line.split(delimiter)
+                expertCategoryCheckinCounts = tokens[1:]
+                expertCategoryCheckinCounts = [int(numeric_string) for numeric_string in expertCategoryCheckinCounts]
+                cosineSimilarity = 1 - spatial.distance.cosine(userCategoryCheckinCounts, expertCategoryCheckinCounts)
+                cosineSimilarities[tokens[0]] = cosineSimilarity
+
+            estimatedRankings = {}
+            #Find estimated rankings
+            for expert, similarity in cosineSimilarities.items():
+                expertCheckinsPath = expertCheckinsPrefix + expert + fileSuffix
+                checkinsFile = open(expertCheckinsPath, "r")
+                lines = checkinsFile.readlines()
+
+                for line in lines:
+                    tokens = line.split(delimiter)
+                    venueId = tokens[0]
+                    venueCheckinCount = float(tokens[1])
+                    estimatedRanking = cosineSimilarities[expert] * venueCheckinCount
+
+                    #TODO Need decision?
+                    if venueId in estimatedRankings:
+                        estimatedRankings[venueId] = max(estimatedRankings[venueId], estimatedRanking)
+                    else:
+                        estimatedRankings[venueId] = estimatedRanking
+
+            sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
+            sortedEstimatedRankings.reverse()
+
+            #print(sortedEstimatedRankings)
+            activities = []
+            for venueId, ranking in sortedEstimatedRankings[:3]:
+                photoResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417")
+                photoItem = photoResponse["response"]["photos"]["items"][0]
+                prefix = photoItem["prefix"]
+                suffix = photoItem["suffix"]
+                photoURL = prefix + "500x300" + suffix
+                
+                venueResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417")
+                venue = venueResponse["response"]["venue"]
+                place = new Place(venue["location"]["lat"], venue["location"]["lng"])
+                activity = new Activity(venueId, venue["name"], "Kofi is a nice place!", photoURL, place)
+                activity.addFromTo(ffrom.strftime(timeFormat), to.strftime(timeFormat))
+                activities.append(activity)
+            # BURAYA EKLEDİM BİTTİ
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
-            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities, "response": r.json()} )
+            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities )
     except:
         return dumps({'Error': 'Error occured'})
 
@@ -124,7 +221,7 @@ def delete_travel(travel_id, activity_id):
     except:
         return dumps({'Error': 'Error occured'})
         
-if __name__ == "__main__":
+if __name__ == "__main__": 
     app.debug = True 
     port = int(os.environ.get("PORT", 5000))   
     app.run(port=port)

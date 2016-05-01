@@ -11,3 +11,5 @@ pymongo==3.2.2
 requests==2.9.1
 Werkzeug==0.11.5
 WTForms==2.1
+NumPy==1.11.0
+SciPy==0.17.0
