@@ -64,9 +64,13 @@ def get_bulk_venues(access_token, venue_ids, batch):
 
             result_venues.append(venue)
 
-    print('Debug: Request venue ids are ' + str(request_venue_ids))
-    print('Debug: Candidate venues are ' + str(candidate_venues_b))
-    print( 'Debug: Returned ' + str(len(result_venues)) + ' candidate venues: ' + str(result_venues))
+    print('')
+    print('=== Batch ' + str(batch) + " ===")
+    print('Request venue ids are ' + str(request_venue_ids))
+    print('Candidate venues are ' + str(candidate_venues_b))
+    print('Returned ' + str(len(result_venues)) + ' candidate venues: '
+    print(result_venues)
+    print('')
     
     return result_venues
 
@@ -77,7 +81,7 @@ def get_venues_for_day(access_token, venue_ids, day):
 
     # venue_ids = [line.rstrip('\n') for line in open('recommendations.txt')]
 
-    batch = 0
+    batch = 1
     while(len(scheduled_types) > len(scheduled_venues)):
         next_type = scheduled_types[len(scheduled_venues)]
         candidate_index = 0
@@ -94,10 +98,10 @@ def get_venues_for_day(access_token, venue_ids, day):
                 break
 
         if is_added == False:
-            candidate_venues += get_bulk_venues(access_token, venue_ids, 0)
+            candidate_venues += get_bulk_venues(access_token, venue_ids, batch)
             batch += 1
 
-        if batch > 3:
+        if batch >= 10:
             print('High number of batches executed: ' + str(batch - 1))
             print('Terminating  (-_-)')
             break
@@ -253,9 +257,8 @@ def create_travel():
             for index, line in enumerate(expertsFileLines):
                 expertCategoryTFs = line.split(delimiter)
                 categoryCheckinCount = float(categoryLines[index].split(delimiter)[1])
-                expertCategoryTFIDFs = [float(numeric_string) / categoryCheckinCount for numeric_string in
-                                        expertCategoryTFs]
-                cosineSimilarity = 1 - spatial.distance.cosine(userCategoryTFIDFs, expertCategoryTFIDFs)
+                expertCategoryTFIDFs = [float(numeric_string) / categoryCheckinCount for numeric_string in expertCategoryTFs]
+                cosineSimilarity = 1 - spatial.distance.cosine(userCategoryTFIDFs, expertCategoryTFIDFs) if count > 0 else 0.5
                 if cosineSimilarity > 0:
                     expertID = IDs[index].split('\n')[0]
                     expertCosineSimilarities[expertID] = cosineSimilarity
@@ -282,7 +285,8 @@ def create_travel():
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
             venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
-            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(access_token, venue_ids, ffrom)})
+            activities = get_venues_for_day(access_token, venue_ids, ffrom)
+            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities})
     except:
         traceback.print_exc()
         return dumps({'Error': 'Error occured'})
