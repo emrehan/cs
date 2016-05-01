@@ -74,24 +74,24 @@ def get_bulk_venues(access_token, venue_ids, batch):
     
     return result_venues
 
-def get_venues_for_day(access_token, venue_ids, day):
-    scheduled_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
+def get_venues_for_day(access_token, venue_ids, date):
+    schedule_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
     scheduled_venues = []
     candidate_venues = []
 
     # venue_ids = [line.rstrip('\n') for line in open('recommendations.txt')]
 
     batch = 1
-    while(len(scheduled_types) > len(scheduled_venues)):
-        next_type = scheduled_types[len(scheduled_venues)]
+    while(len(schedule_types) > len(scheduled_venues)):
+        next_type = schedule_types[len(scheduled_venues)]
         candidate_index = 0
         candidate_count = len(candidate_venues)
 
         is_added = False
         for venue in candidate_venues:
             if next_type in venue['allocations']:
-                venue['from'] = day
-                venue['to'] = day
+                venue['from'] = date
+                venue['to'] = date
                 scheduled_venues.append(venue)
                 candidate_venues.remove(venue)
                 is_added = True
