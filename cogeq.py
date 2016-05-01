@@ -122,36 +122,77 @@ def create_travel():
             activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
 
             #BURAYA EKLİYORUM
-            prePath = "checkins/"
+            prePath = "/home/remzican/Documents/checkins/"
             cityName = "London/"
-            expertListFileName = "experts"
-            fileSuffix = ".csv"
+            checkinsFolderName = "expert_checkins/"
+            expertsCategoryTFFileName = "expert_categories.csv"
+            expertIDsFileName = "expert_ids.txt"
+            categoriesFileName = "categories.csv"
             delimiter = ","
 
-            expertsFilePath = prePath + cityName + expertListFileName + fileSuffix
-            expertCheckinsPrefix = prePath + cityName
+            categoriesFilePath = prePath + categoriesFileName
+            expertsFilePath = prePath + cityName + expertsCategoryTFFileName
+            expertIDsFilePath = prePath + cityName + expertIDsFileName
+            expertCheckinsPrefix = prePath + cityName + checkinsFolderName
 
+            # Create TF-IDF vector of the user
+            userCategoryTFDictionary = {}
 
-            #Turkish Restaurant,Restaurant,Museum
+            with open(prePath + 'response.json') as data_file:
+                data = json.load(data_file)
+                count = data["response"]["response"]["checkins"]["count"]
+                items = data["response"]["response"]["checkins"]["items"]
 
-            #TODO Find category-checkin count vector of the user
-            userCategoryCheckinCounts = checkinCounts
+                for item in items:
+                    categories = item["venue"]["categories"]
+                    for category in categories:
+                        categoryName = category["name"]
+                        if categoryName in userCategoryTFDictionary:
+                            userCategoryTFDictionary[categoryName] += 1
+                        else:
+                            userCategoryTFDictionary[categoryName] = 1
 
-            #Iterate through experts
-            expertsFile = open(expertsFilePath, "r")
-            lines = expertsFile.readlines()
-            cosineSimilarities = {}
+                for key, value in userCategoryTFDictionary.items():
+                    userCategoryTFDictionary[key] = float(value) / count
 
-            for line in lines:
+            categoriesFile = open(categoriesFilePath, "r")
+            categoryLines = categoriesFile.readlines()
+            userCategoryTFIDFs = []
+
+            for line in categoryLines:
                 tokens = line.split(delimiter)
-                expertCategoryCheckinCounts = tokens[1:]
-                expertCategoryCheckinCounts = [int(numeric_string) for numeric_string in expertCategoryCheckinCounts]
-                cosineSimilarity = 1 - spatial.distance.cosine(userCategoryCheckinCounts, expertCategoryCheckinCounts)
-                cosineSimilarities[tokens[0]] = cosineSimilarity
+                categoryName = tokens[0]
+
+                if categoryName in userCategoryTFDictionary:
+                    categoryTF = userCategoryTFDictionary[categoryName]
+                else:
+                    categoryTF = 0
+
+                categoryCheckinCount = int(tokens[1])
+                categoryIDF = 1.0 / categoryCheckinCount
+                userCategoryTFIDFs.append(categoryTF * categoryIDF)
+
+            # Iterate through experts to find similarities
+            expertsFile = open(expertsFilePath, "r")
+            expertIDsFile = open(expertIDsFilePath, "r")
+            expertsFileLines = expertsFile.readlines()
+            IDs = expertIDsFile.readlines()
+            expertCosineSimilarities = {}
+
+            for index, line in enumerate(expertsFileLines):
+                expertCategoryTFs = line.split(delimiter)
+                categoryCheckinCount = float(categoryLines[index].split(delimiter)[1])
+                expertCategoryTFIDFs = [float(numeric_string) / categoryCheckinCount for numeric_string in
+                                        expertCategoryTFs]
+                cosineSimilarity = 1 - spatial.distance.cosine(userCategoryTFIDFs, expertCategoryTFIDFs)
+                if cosineSimilarity > 0:
+                    expertID = IDs[index].split('\n')[0]
+                    expertCosineSimilarities[expertID] = cosineSimilarity
+
             estimatedRankings = {}
-            #Find estimated rankings
-            for expert, similarity in cosineSimilarities.items():
-                expertCheckinsPath = expertCheckinsPrefix + expert + fileSuffix
+            # Find estimated rankings
+            for expert, similarity in expertCosineSimilarities.items():
+                expertCheckinsPath = expertCheckinsPrefix + expert + ".csv"
                 checkinsFile = open(expertCheckinsPath, "r")
                 lines = checkinsFile.readlines()
 
@@ -159,18 +200,17 @@ def create_travel():
                     tokens = line.split(delimiter)
                     venueId = tokens[0]
                     venueCheckinCount = float(tokens[1])
-                    estimatedRanking = cosineSimilarities[expert] * venueCheckinCount
+                    estimatedRanking = similarity * venueCheckinCount
 
-                    #TODO Need decision?
+                    # TODO Need decision?
                     if venueId in estimatedRankings:
-                        estimatedRankings[venueId] = max(estimatedRankings[venueId], estimatedRanking)
+                        estimatedRankings[venueId] += estimatedRanking
                     else:
                         estimatedRankings[venueId] = estimatedRanking
 
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
-
-            #print(sortedEstimatedRankings)
+            #venueIds = list(map(lambda e: e[0], sortedEstimatedRankings))
             activities = []
             for venueId, ranking in sortedEstimatedRankings[:3]:
                 photoResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417").text)
