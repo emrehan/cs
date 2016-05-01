@@ -180,8 +180,8 @@ def create_travel():
                 
                 venueResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417")
                 venue = venueResponse["response"]["venue"]
-                place = new Place(venue["location"]["lat"], venue["location"]["lng"])
-                activity = new Activity(venueId, venue["name"], "Kofi is a nice place!", photoURL, place)
+                place = Place(venue["location"]["lat"], venue["location"]["lng"])
+                activity = Activity(venueId, venue["name"], "Kofi is a nice place!", photoURL, place)
                 activity.addFromTo(ffrom.strftime(timeFormat), to.strftime(timeFormat))
                 activities.append(activity)
             # BURAYA EKLEDİM BİTTİ
