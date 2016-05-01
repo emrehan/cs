@@ -172,13 +172,13 @@ def create_travel():
             #print(sortedEstimatedRankings)
             activities = []
             for venueId, ranking in sortedEstimatedRankings[:3]:
-                photoResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417")
+                photoResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417").text)
                 photoItem = photoResponse["response"]["photos"]["items"][0]
                 prefix = photoItem["prefix"]
                 suffix = photoItem["suffix"]
                 photoURL = prefix + "500x300" + suffix
                 
-                venueResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417")
+                venueResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417").text)
                 venue = venueResponse["response"]["venue"]
                 place = Place(venue["location"]["lat"], venue["location"]["lng"])
                 activity = Activity(venueId, venue["name"], "Kofi is a nice place!", photoURL, place)
