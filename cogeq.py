@@ -200,7 +200,7 @@ def create_travel():
 
                     # TODO Need decision?
                     if venueId in estimatedRankings:
-                        estimatedRankings[venueId] += estimatedRanking
+                        estimatedRankings[venueId] = max(estimatedRankings[venueId], estimatedRanking)
                     else:
                         estimatedRankings[venueId] = estimatedRanking
 
