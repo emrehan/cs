@@ -95,12 +95,12 @@ def create_travel():
             r = requests.get("https://api.foursquare.com/v2/users/self/checkins?oauth_token=" + access_token + "&limit=250&offset=0&v=20160417")            
             categories = []
             checkinCounts = []
-            return dumps("asd2")
             with open("categories.txt") as f:
+                return dumps("asd2")
                 lines = f.readlines()
-            for line in lines:
-                categories.append(line)
-                checkinCounts.append(0)
+                for line in lines:
+                    categories.append(line)
+                    checkinCounts.append(0)
             for item in r["response"]["items"]:
                 if item["categories"]["name"] in categories:
                     categoryIndex = categories.index(item["categories"]["name"])
