@@ -14,6 +14,83 @@ import requests
 import uuid
 import traceback
 
+day_categories = set([line.rstrip('\n') for line in open('day_categories.txt')])
+night_categories = set([line.rstrip('\n') for line in open('night_categories.txt')])
+food_categories = set([line.rstrip('\n') for line in open('food_categories.txt')])
+
+### FUNCTIONS ###
+
+def get_bulk_venues(venue_ids, batch):
+    size = 10
+    url = 'https://api.foursquare.com/v2//venues/'
+    access_token = 'KB1B5QY1EE0TWXXGKCAFNJGNPBA5LJ2NSU42IX3CS3OCQTCW'
+    params = "?oauth_token=" + access_token + "&v=20160417"
+
+    request_urls = list(map(lambda i: url + i + params, venue_ids[batch*size:(batch+1)*size]))
+
+    candidate_venues_a = (grequests.get(u, timeout=3) for u in request_urls)
+    candidate_venues_b = filter(None, grequests.map(candidate_venues_a))
+    candidate_venues_c = list(map(lambda r: r.json()['response']['venue'], candidate_venues_b))
+
+    result_venues = []
+    for candidate_venue in candidate_venues_c:
+        categories = set(map(lambda categories: categories['name'], candidate_venue['categories']))
+        allocations = []
+        if len(categories.intersection(day_categories)) > 0:
+            allocations.append('day')
+        
+        if len(categories.intersection(night_categories)) > 0:
+            allocations.append('night')
+        
+        if len(categories.intersection(food_categories)) > 0:
+            allocations.append('food')
+
+        if len(allocations) >= 0:
+            venue = {}
+            venue['type'] = 'visit'
+            venue['allocations'] = allocations
+            venue['id'] = candidate_venue['id']
+            venue['name'] = candidate_venue['name']
+            if candidate_venue['photos']['count'] > 0:
+                prefix = candidate_venue['photos']['groups'][0]['items'][0]['prefix']
+                suffix = candidate_venue['photos']['groups'][0]['items'][0]['suffix']
+                venue['picture_url'] = prefix + '500x300' + suffix
+            else:
+                venue['picture_url'] = 'http://www.fb-coverz.com/covers/preview/travel.png'
+
+            result_venues.append(venue)
+    print( 'Returning ' + str(len(result_venues)) + ' candidate venues' )
+    return result_venues
+
+def get_venues_for_day(venue_ids, day):
+    scheduled_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
+    scheduled_venues = []
+    candidate_venues = []
+
+    # venue_ids = [line.rstrip('\n') for line in open('recommendations.txt')]
+
+    batch = 0
+    while(len(scheduled_types) > len(scheduled_venues)):
+        next_type = scheduled_types[len(scheduled_venues)]
+        candidate_index = 0
+        candidate_count = len(candidate_venues)
+
+        is_added = False
+        for venue in candidate_venues:
+            if next_type in venue['allocations']:
+                venue['from'] = day
+                venue['to'] = day
+                scheduled_venues.append(venue)
+                candidate_venues.remove(venue)
+                is_added = True
+                break
+
+        if is_added == False:
+            candidate_venues += get_bulk_venues(venue_ids, 0)
+            batch += 1
+    return scheduled_venues
+
+
 class Travel(DynamicDocument):
     travel_id = StringField()
     
@@ -103,22 +180,6 @@ def create_travel():
                     categories.append(line)
                     checkinCounts.append(0)
 
-
-            '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
-            activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            place2 = {"latitude": "39.1667", "longitude": "35.6667"}
-            activity2 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            place3 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
-            activity3 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            place4 = {"latitude": "39.1667", "longitude": "35.6667"}
-            activity4 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            place5 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
-            activity5 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            place6 = {"latitude": "39.1667", "longitude": "35.6667"}
-            activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
-            activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
-
-            #BURAYA EKLİYORUM
             prePath = "checkins/"
             cityName = city + "/"
             checkinsFolderName = "expert_checkins/"
@@ -207,36 +268,9 @@ def create_travel():
 
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
-            #venueIds = list(map(lambda e: e[0], sortedEstimatedRankings))
-            activities = []
-            for venueId, ranking in sortedEstimatedRankings[:3]:
-                photoResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417").text)
-                if photoResponse["response"]["photos"]["count"]:
-                    photoItem = photoResponse["response"]["photos"]["items"][0]
-                    prefix = photoItem["prefix"]
-                    suffix = photoItem["suffix"]
-                    photoURL = prefix + "500x300" + suffix
-                else:
-                    photoURL = "http://www.fb-coverz.com/covers/preview/travel.png"
-                
-                venueResponse = json.loads(requests.get("https://api.foursquare.com/v2/venues/" + venueId + "?oauth_token=" + access_token + "&v=20160417").text)
-                venue = venueResponse["response"]["venue"]
-                place = Place(venue["location"]["lat"], venue["location"]["lng"])
-                activity = Activity(venueId, venue["name"], "Kofi is a nice place!", photoURL, place)
-                activity.addFromTo(ffrom.strftime(timeFormat), to.strftime(timeFormat))
-                activities.append(activity)
-            # BURAYA EKLEDİM BİTTİ
-
-            #travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
-            activitesArr = []
-            for activity in activities:
-                place = {"latitude": activity.place.latitude, "longitude": activity.place.longitude}
-                activity = {"id": activity.id, "name": activity.name, "type": "visit", "place": place,
-                             "picture_url": activity.picture_url,
-                             "description": activity.description, "from": activity.ffrom,
-                             "to": activity.to}
-                activitesArr.append(activity)
-            return dumps({'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activitesArr})
+            venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
+            
+            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(venue_ids, day)})
     except:
         traceback.print_exc()
         return dumps({'Error': 'Error occured'})
