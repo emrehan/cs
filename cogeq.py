@@ -95,7 +95,7 @@ def create_travel():
             r = requests.get("https://api.foursquare.com/v2/users/self/checkins?oauth_token=" + access_token + "&limit=250&offset=0&v=20160417")            
             categories = []
             checkinCounts = []
-            with open("categories.txt") as f:
+            with open("categories.txt", "r") as f:
                 return dumps("asd2")
                 lines = f.readlines()
                 for line in lines:
