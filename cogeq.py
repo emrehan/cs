@@ -96,7 +96,6 @@ def create_travel():
             categories = []
             checkinCounts = []
             with open("categories.txt", "r") as f:
-                return dumps("asd2")
                 lines = f.readlines()
                 for line in lines:
                     categories.append(line)
@@ -105,6 +104,7 @@ def create_travel():
                 if item["categories"]["name"] in categories:
                     categoryIndex = categories.index(item["categories"]["name"])
                     checkinCounts[categoryIndex] += 1
+
             '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
             activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             place2 = {"latitude": "39.1667", "longitude": "35.6667"}
@@ -118,6 +118,7 @@ def create_travel():
             place6 = {"latitude": "39.1667", "longitude": "35.6667"}
             activity6 = {"id": "1234", "name": "Ankara Kalesi", "type": "visit", "place": place2, "picture_url": "http://gezipgordum.com/wp-content/uploads/Ankara-Kalesi2.jpg", "description": "Kofi is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
+
             #BURAYA EKLİYORUM
             prePath = "checkins/"
             cityName = "London/"
@@ -183,6 +184,7 @@ def create_travel():
                 activity.addFromTo(ffrom.strftime(timeFormat), to.strftime(timeFormat))
                 activities.append(activity)
             # BURAYA EKLEDİM BİTTİ
+
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
             return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities })
     except:
