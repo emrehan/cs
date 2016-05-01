@@ -91,6 +91,11 @@ def get_venues_for_day(access_token, venue_ids, day):
         if is_added == False:
             candidate_venues += get_bulk_venues(access_token, venue_ids, 0)
             batch += 1
+
+        if batch > 3:
+            print('High number of batches executed: ' + str(batch - 1))
+            print('Terminating  (-_-)')
+            break
     return scheduled_venues
 
 
