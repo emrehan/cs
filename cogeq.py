@@ -21,20 +21,22 @@ food_categories = set([line.rstrip('\n') for line in open('food_categories.txt')
 
 ### FUNCTIONS ###
 
-def get_bulk_venues(venue_ids, batch):
+def get_bulk_venues(access_token, venue_ids, batch):
     size = 10
     url = 'https://api.foursquare.com/v2//venues/'
-    access_token = 'KB1B5QY1EE0TWXXGKCAFNJGNPBA5LJ2NSU42IX3CS3OCQTCW'
     params = "?oauth_token=" + access_token + "&v=20160417"
 
     request_urls = list(map(lambda i: url + i + params, venue_ids[batch*size:(batch+1)*size]))
 
     candidate_venues_a = (grequests.get(u, timeout=3) for u in request_urls)
-    candidate_venues_b = filter(None, grequests.map(candidate_venues_a))
-    candidate_venues_c = list(map(lambda r: r.json()['response']['venue'], candidate_venues_b))
+    candidate_venues_b = grequests.map(candidate_venues_a)
+    candidate_venues_c = filter(None, candidate_venues_b)
+    candidate_venues_d = list(map(lambda r: r.json()['response']['venue'], candidate_venues_c))
+
+    print('Debug: Candidate venues are ' + str(candidate_venues_b))
 
     result_venues = []
-    for candidate_venue in candidate_venues_c:
+    for candidate_venue in candidate_venues_d:
         categories = set(map(lambda categories: categories['name'], candidate_venue['categories']))
         allocations = []
         if len(categories.intersection(day_categories)) > 0:
@@ -60,10 +62,10 @@ def get_bulk_venues(venue_ids, batch):
                 venue['picture_url'] = 'http://www.fb-coverz.com/covers/preview/travel.png'
 
             result_venues.append(venue)
-    print( 'Returning ' + str(len(result_venues)) + ' candidate venues' )
+    print( 'Debug: Returned ' + str(len(result_venues)) + ' candidate venues: ' + str(result_venues))
     return result_venues
 
-def get_venues_for_day(venue_ids, day):
+def get_venues_for_day(access_token, venue_ids, day):
     scheduled_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
     scheduled_venues = []
     candidate_venues = []
@@ -87,7 +89,7 @@ def get_venues_for_day(venue_ids, day):
                 break
 
         if is_added == False:
-            candidate_venues += get_bulk_venues(venue_ids, 0)
+            candidate_venues += get_bulk_venues(access_token, venue_ids, 0)
             batch += 1
     return scheduled_venues
 
@@ -270,8 +272,7 @@ def create_travel():
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
             venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
-            
-            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(venue_ids, ffrom)})
+            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': get_venues_for_day(access_token, venue_ids, ffrom)})
     except:
         traceback.print_exc()
         return dumps({'Error': 'Error occured'})
