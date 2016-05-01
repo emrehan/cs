@@ -100,9 +100,10 @@ def create_travel():
                 for line in lines:
                     categories.append(line)
                     checkinCounts.append(0)
-            for item in r["response"]["checkins"]["items"]:
-                if item["categories"]["name"] in categories:
-                    categoryIndex = categories.index(item["categories"]["name"])
+            data = json.loads(r.text)
+            for item in data["response"]["checkins"]["items"]:
+                if item["venue"]["categories"][0]["name"] in categories:
+                    categoryIndex = categories.index(item["venue"]["categories"][0]["name"])
                     checkinCounts[categoryIndex] += 1
 
             '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
