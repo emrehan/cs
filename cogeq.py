@@ -104,6 +104,7 @@ def create_travel():
                 if item["categories"]["name"] in categories:
                     categoryIndex = categories.index(item["categories"]["name"])
                     checkinCounts[categoryIndex] += 1
+            return dumps("asd2")
             '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
             activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
             place2 = {"latitude": "39.1667", "longitude": "35.6667"}
@@ -166,7 +167,6 @@ def create_travel():
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
 
-            return dumps("asd2")
             #print(sortedEstimatedRankings)
             activities = []
             for venueId, ranking in sortedEstimatedRankings[:3]:
