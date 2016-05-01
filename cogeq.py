@@ -122,8 +122,8 @@ def create_travel():
             activities = [activity1, activity2, activity3, activity4, activity5, activity6];'''
 
             #BURAYA EKLİYORUM
-            prePath = "/home/remzican/Documents/checkins/"
-            cityName = "London/"
+            prePath = "checkins/"
+            cityName = city + "/"
             checkinsFolderName = "expert_checkins/"
             expertsCategoryTFFileName = "expert_categories.csv"
             expertIDsFileName = "expert_ids.txt"
