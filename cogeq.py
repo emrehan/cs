@@ -101,11 +101,7 @@ def create_travel():
                 for line in lines:
                     categories.append(line)
                     checkinCounts.append(0)
-            data = json.loads(r.text)
-            for item in data["response"]["checkins"]["items"]:
-                if item["venue"]["categories"][0]["name"] in categories:
-                    categoryIndex = categories.index(item["venue"]["categories"][0]["name"])
-                    checkinCounts[categoryIndex] += 1
+            
 
             '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
             activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
@@ -138,22 +134,21 @@ def create_travel():
             # Create TF-IDF vector of the user
             userCategoryTFDictionary = {}
 
-            with open(prePath + 'response.json') as data_file:
-                data = json.load(data_file)
-                count = data["response"]["response"]["checkins"]["count"]
-                items = data["response"]["response"]["checkins"]["items"]
+            data = json.load(r.text)
+            count = data["response"]["response"]["checkins"]["count"]
+            items = data["response"]["response"]["checkins"]["items"]
 
-                for item in items:
-                    categories = item["venue"]["categories"]
-                    for category in categories:
-                        categoryName = category["name"]
-                        if categoryName in userCategoryTFDictionary:
-                            userCategoryTFDictionary[categoryName] += 1
-                        else:
-                            userCategoryTFDictionary[categoryName] = 1
+            for item in items:
+                categories = item["venue"]["categories"]
+                for category in categories:
+                    categoryName = category["name"]
+                    if categoryName in userCategoryTFDictionary:
+                        userCategoryTFDictionary[categoryName] += 1
+                    else:
+                        userCategoryTFDictionary[categoryName] = 1
 
-                for key, value in userCategoryTFDictionary.items():
-                    userCategoryTFDictionary[key] = float(value) / count
+            for key, value in userCategoryTFDictionary.items():
+                userCategoryTFDictionary[key] = float(value) / count
 
             categoriesFile = open(categoriesFilePath, "r")
             categoryLines = categoriesFile.readlines()
