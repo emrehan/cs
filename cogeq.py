@@ -51,7 +51,7 @@ def dummy_db():
     if request.method == 'POST':
         travel = Travel(travel_id = str(uuid.uuid1()))
         travel.save()
-        return dumps( {'travel': travel} )
+        return dumps( {'travel': travel.id} )
 
 @app.route("/login", methods=["GET"])
 def login():
@@ -101,7 +101,7 @@ def create_travel():
                 for line in lines:
                     categories.append(line)
                     checkinCounts.append(0)
-            
+
 
             '''place1 = {"latitude": "39.9208289", "longitude": "32.85387930000002"}
             activity1 = {"id": "123", "name": "Kizilay", "type": "visit", "place": place1, "picture_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/K%C4%B1z%C4%B1lay_Square_in_Ankara,_Turkey.JPG", "description": "Kizilay is a nice place", "from": ffrom.strftime(timeFormat), "to": to.strftime(timeFormat)}
