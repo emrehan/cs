@@ -187,7 +187,16 @@ def create_travel():
             # BURAYA EKLEDİM BİTTİ
 
             #travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
-            return dumps({'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities})
+            activitesArr = []
+            for activity in activities:
+                place = {"latitude": activity.place.latitude, "longitude": activity.place.longitude}
+                activity = {"id": activity.id, "name": activity.name, "type": "visit", "place": activity.place,
+                             "picture_url": activity.picture_url,
+                             "description": activity.description, "from": activity.ffrom,
+                             "to": activity.to}
+                activitesArr.append(activity)
+
+            return dumps({'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activitesArr})
     except:
         return dumps({'Error': 'Error occured'})
 
