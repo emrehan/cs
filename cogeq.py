@@ -170,7 +170,6 @@ def create_travel():
             sortedEstimatedRankings.reverse()
 
             #print(sortedEstimatedRankings)
-            return dumps("asd2")
             activities = []
             for venueId, ranking in sortedEstimatedRankings[:3]:
                 photoResponse = requests.get("https://api.foursquare.com/v2/venues/" + venueId + "/photos?oauth_token=" + access_token + "&v=20160417")
