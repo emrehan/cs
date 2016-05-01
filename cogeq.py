@@ -186,7 +186,7 @@ def create_travel():
                 activities.append(activity)
             # BURAYA EKLEDİM BİTTİ
             travel = { 'city': city, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
-            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities )
+            return dumps( { 'travel_id': 3, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities })
     except:
         return dumps({'Error': 'Error occured'})
 
