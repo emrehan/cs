@@ -51,12 +51,14 @@ def get_bulk_venues(access_token, venue_ids, batch):
         if len(categories.intersection(food_categories)) > 0:
             allocations.append('food')
 
+        place2 = {"latitude": "39.1667", "longitude": "35.6667"}
         if len(allocations) > 0:
             venue = {}
             venue['type'] = 'visit'
             venue['allocations'] = allocations
             venue['id'] = candidate_venue['id']
             venue['name'] = candidate_venue['name']
+            venue['place'] = place2
             if candidate_venue['photos']['count'] > 0:
                 prefix = candidate_venue['photos']['groups'][0]['items'][0]['prefix']
                 suffix = candidate_venue['photos']['groups'][0]['items'][0]['suffix']
