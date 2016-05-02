@@ -100,6 +100,7 @@ def get_venues_for_day(access_token, venue_ids, startDate, endDate):
         is_added = False
         for venue in candidate_venues:
             if next_type in venue['allocations']:
+                activityDate.replace(hour=0, minute=0, second=0)
                 venue['from'] = activityDate.strftime(timeFormat)
                 venue['to'] = activityDate.strftime(timeFormat)
                 scheduled_venues.append(venue)
