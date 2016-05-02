@@ -82,7 +82,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
     return result_venues
 
 def get_venues_for_day(access_token, venue_ids, startDate, endDate):
-    numberOfDays = (endDate - startDate).days
+    numberOfDays = (endDate - startDate).days + 1
     unit = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
     schedule_types = []
     for i in range(numberOfDays):
@@ -297,7 +297,8 @@ def create_travel():
             sortedEstimatedRankings.reverse()
             venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
             activities = get_venues_for_day(access_token, venue_ids, ffrom, to)
-            return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities})
+            response = {'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities}
+            return dumps(response)
     except:
         traceback.print_exc()
         return dumps({'Error': 'Error occured'})
