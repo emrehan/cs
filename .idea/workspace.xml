@@ -26,8 +26,8 @@
       <file leaf-file-name="cogeq.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cogeq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="105" column="43" selection-start-line="105" selection-start-column="43" selection-end-line="105" selection-end-column="43" />
+            <state relative-caret-position="338">
+              <caret line="109" column="29" selection-start-line="109" selection-start-column="29" selection-end-line="109" selection-end-column="29" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
               </folding>
@@ -331,8 +331,8 @@
     <entry file="file://$PROJECT_DIR$/test.py" />
     <entry file="file://$PROJECT_DIR$/cogeq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="105" column="43" selection-start-line="105" selection-start-column="43" selection-end-line="105" selection-end-column="43" />
+        <state relative-caret-position="338">
+          <caret line="109" column="29" selection-start-line="109" selection-start-column="29" selection-end-line="109" selection-end-column="29" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
           </folding>

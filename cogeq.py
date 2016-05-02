@@ -107,7 +107,7 @@ def get_venues_for_day(access_token, venue_ids, startDate, endDate):
                 break
 
         if is_added == False:
-            candidate_venues += get_bulk_venues(access_token, venue_ids, batch)
+            candidate_venues = get_bulk_venues(access_token, venue_ids, batch)
             batch += 1
 
         if batch >= 10: 
