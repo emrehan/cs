@@ -78,27 +78,31 @@ def get_bulk_venues(access_token, venue_ids, batch):
     
     return result_venues
 
-def get_venues_for_day(access_token, venue_ids, date):
+def get_venues_for_day(access_token, venue_ids, startDate, endDate):
+    numberOfDays = (endDate - startDate).days
     schedule_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
+    for i in range(numberOfDays-1):
+        schedule_types.append(schedule_types)
     scheduled_venues = []
     candidate_venues = []
-
+    index = 0
+    activityDate = startDate
     # venue_ids = [line.rstrip('\n') for line in open('recommendations.txt')]
 
     batch = 1
     while(len(schedule_types) > len(scheduled_venues)):
         next_type = schedule_types[len(scheduled_venues)]
-        candidate_index = 0
-        candidate_count = len(candidate_venues)
 
         is_added = False
         for venue in candidate_venues:
             if next_type in venue['allocations']:
-                venue['from'] = date.strftime(timeFormat)
-                venue['to'] = date.strftime(timeFormat)
+                venue['from'] = activityDate.strftime(timeFormat)
+                venue['to'] = activityDate.strftime(timeFormat)
                 scheduled_venues.append(venue)
                 candidate_venues.remove(venue)
                 is_added = True
+                index += 1
+                activityDate = startDate + datetime.timedelta(days=index/7)
                 break
 
         if is_added == False:
@@ -288,7 +292,7 @@ def create_travel():
             sortedEstimatedRankings = sorted(estimatedRankings.items(), key=operator.itemgetter(1))
             sortedEstimatedRankings.reverse()
             venue_ids = list(map(lambda e: e[0], sortedEstimatedRankings))
-            activities = get_venues_for_day(access_token, venue_ids, ffrom)
+            activities = get_venues_for_day(access_token, venue_ids, ffrom, to)
             return dumps({'travel_id': 42, 'from': ffrom.strftime(timeFormat), 'to': to.strftime(timeFormat), 'activities': activities})
     except:
         traceback.print_exc()
