@@ -1,3 +1,4 @@
+from datetime import timedelta
 from datetime import datetime
 from bson import Binary, Code
 from bson.json_util import dumps
@@ -102,7 +103,7 @@ def get_venues_for_day(access_token, venue_ids, startDate, endDate):
                 candidate_venues.remove(venue)
                 is_added = True
                 index += 1
-                activityDate = startDate + datetime.timedelta(days=index/7)
+                activityDate = startDate + timedelta(days=index/7)
                 break
 
         if is_added == False:
