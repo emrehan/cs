@@ -57,7 +57,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
             venue['allocations'] = allocations
             venue['id'] = candidate_venue['id']
             venue['name'] = candidate_venue['name']
-            venuePlace = {"latitude": candidate_venue['location']['lat'], "longtitude": candidate_venue['location']['lng']}
+            venuePlace = {"latitude": candidate_venue['location']['lat'], "longitude": candidate_venue['location']['lng']}
             venue['place'] = venuePlace
             if candidate_venue['photos']['count'] > 0:
                 prefix = candidate_venue['photos']['groups'][0]['items'][0]['prefix']
