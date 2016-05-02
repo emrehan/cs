@@ -29,7 +29,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
     url = 'https://api.foursquare.com/v2//venues/'
     client_id = "XWWK4XOYWX3J1XDRN43LL2V0EB41OFCDF3EBZ1CZIABKA1DL"
     client_secret = "MGDCFYKO2SZP0TNPWOI4KJ2P5GVHRTWUIAB4O0I25PBH2BAS"
-    params = "?client_id=" + client_id + "&client_secret" + client_secret + "&v=20160417"
+    params = "?client_id=" + client_id + "&client_secret=" + client_secret + "&v=20160417"
 
     request_venue_ids = venue_ids[batch*size:(batch+1)*size]
     request_urls = list(map(lambda i: url + i + params, request_venue_ids))
