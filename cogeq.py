@@ -25,7 +25,7 @@ food_categories = set([line.rstrip('\n') for line in open('food_categories.txt')
 ### FUNCTIONS ###
 
 def get_bulk_venues(access_token, venue_ids, batch):
-    size = 1
+    size = 20
     url = 'https://api.foursquare.com/v2//venues/'
     client_id = "XWWK4XOYWX3J1XDRN43LL2V0EB41OFCDF3EBZ1CZIABKA1DL"
     client_secret = "MGDCFYKO2SZP0TNPWOI4KJ2P5GVHRTWUIAB4O0I25PBH2BAS"
