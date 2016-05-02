@@ -81,9 +81,9 @@ def get_bulk_venues(access_token, venue_ids, batch):
 
 def get_venues_for_day(access_token, venue_ids, startDate, endDate):
     numberOfDays = (endDate - startDate).days
-    schedule_types = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
-    for i in range(numberOfDays-1):
-        schedule_types.append(schedule_types)
+    unit = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
+    for i in range(numberOfDays):
+        schedule_types = schedule_types + unit
     scheduled_venues = []
     candidate_venues = []
     index = 0
@@ -107,7 +107,7 @@ def get_venues_for_day(access_token, venue_ids, startDate, endDate):
                 break
 
         if is_added == False:
-            candidate_venues = get_bulk_venues(access_token, venue_ids, batch)
+            candidate_venues += get_bulk_venues(access_token, venue_ids, batch)
             batch += 1
 
         if batch >= 10: 
