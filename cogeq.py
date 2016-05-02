@@ -84,6 +84,7 @@ def get_bulk_venues(access_token, venue_ids, batch):
 def get_venues_for_day(access_token, venue_ids, startDate, endDate):
     numberOfDays = (endDate - startDate).days
     unit = ['day', 'day', 'food', 'day', 'day', 'food', 'night']
+    schedule_types = []
     for i in range(numberOfDays):
         schedule_types = schedule_types + unit
     scheduled_venues = []
